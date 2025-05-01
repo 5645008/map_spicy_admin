@@ -1,8 +1,11 @@
+// src/pages/AdminDangerMapPage.js
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import styles from './AdminPage.module.css';
+import { Link } from 'react-router-dom';
 
 /* global naver */
-const AdminDangerMap = () => {
+const AdminDangerMapPage = () => {
   const mapRef = useRef(null);
   const [paths, setPaths] = useState([]);
 
@@ -13,7 +16,6 @@ const AdminDangerMap = () => {
         const updatedPaths = [];
 
         for (const path of res.data) {
-          // route_coords가 없으면 API 호출로 갱신 시도
           if (!path.route_coords) {
             try {
               const registerRes = await axios.post('http://localhost:3001/api/router/register', {
@@ -24,7 +26,10 @@ const AdminDangerMap = () => {
               });
 
               if (registerRes.data.success) {
-                updatedPaths.push({ ...path, route_coords: JSON.stringify(registerRes.data.route_coords) });
+                updatedPaths.push({
+                  ...path,
+                  route_coords: JSON.stringify(registerRes.data.route_coords),
+                });
               } else {
                 console.warn('❌ 경로 등록 실패:', registerRes.data.message);
               }
@@ -80,14 +85,35 @@ const AdminDangerMap = () => {
   }, [paths]);
 
   return (
-    <div style={{ height: '500px', marginTop: '40px' }}>
-      <h2 style={{ padding: '10px 0' }}>🧭 위험구간 시각화</h2>
-      <div
-        ref={mapRef}
-        style={{ width: '100%', height: '100%', border: '1px solid #ccc' }}
-      />
+    <div className={styles['admin-wrapper']}>
+      <div className={styles['admin-container']}>
+        {/* 🔹 왼쪽 상단으로 버튼 이동 */}
+        <div className={styles['admin-button-top-left']}>
+          <Link to="/admin" className={styles['admin-link-button']}>
+            ← 관리자 페이지로
+          </Link>
+        </div>
+
+        {/* 🔹 제목은 그 아래에 위치 */}
+        <h1 className={styles['admin-title']} style={{ fontSize: '1.8rem' }}>
+          🧭 위험 구간 지도 페이지
+        </h1>
+
+        {/* 지도 */}
+        <div style={{ height: '500px', marginTop: '30px' }}>
+          <h2 style={{ padding: '10px 0' }}>🚧 민원 기반 위험 경로 시각화</h2>
+          <div
+            ref={mapRef}
+            style={{
+              width: '100%',
+              height: '100%',
+              border: '1px solid #ccc',
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
-export default AdminDangerMap;
+export default AdminDangerMapPage;
