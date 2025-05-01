@@ -58,6 +58,14 @@ const AdminDangerMapPage = () => {
       zoom: 14,
     });
 
+    // ✅ InfoWindow 전역 하나 생성
+    const infoWindow = new naver.maps.InfoWindow();
+
+    // ✅ 지도 클릭 시 InfoWindow 닫기
+    naver.maps.Event.addListener(map, 'click', () => {
+      infoWindow.close();
+    });
+
     paths.forEach((path) => {
       let coords = [];
 
@@ -74,12 +82,22 @@ const AdminDangerMapPage = () => {
         path: latlngs,
         strokeColor: '#f43f5e',
         strokeWeight: 5,
-        strokeOpacity: 0.7,
+        strokeOpacity: 1,
+        strokeStyle: 'solid',
+        clickable: true,
+        zIndex: 999,
         map: map,
       });
 
-      naver.maps.Event.addListener(polyline, 'click', () => {
-        alert(`📍 위험도 추정: ${latlngs.length}점`);
+
+      naver.maps.Event.addListener(polyline, 'click', (e) => {
+        infoWindow.setContent(
+          `<div style="padding:10px;font-size:14px;max-width:200px;">
+            ⚠️ <strong>위험 사유</strong><br />
+            ${path.reason || '내용 없음'}
+          </div>`
+        );
+        infoWindow.open(map, e.coord);
       });
     });
   }, [paths]);
@@ -110,6 +128,23 @@ const AdminDangerMapPage = () => {
               border: '1px solid #ccc',
             }}
           />
+        </div>
+
+        {/* ✅ reason 리스트 출력 */}
+        <div style={{ marginTop: '40px' }}>
+          <h2 style={{ margin: '30px 0 10px 0' }}>📝 경로 기반 민원 내용</h2>
+          <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
+            {paths.map((item, idx) => (
+              <li key={idx} style={{
+                borderBottom: '1px solid #eee',
+                padding: '10px 0',
+                color: '#333',
+                fontSize: '14px'
+              }}>
+                {item.reason || '내용 없음'}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
