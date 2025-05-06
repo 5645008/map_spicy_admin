@@ -31,6 +31,7 @@ const AdminDangerMapPage = () => {
                 updatedPaths.push({
                   ...path,
                   id: path.id,
+                  created_at: path.created_at,
                   route_coords: JSON.stringify(registerRes.data.route_coords),
                 });
               } else {
