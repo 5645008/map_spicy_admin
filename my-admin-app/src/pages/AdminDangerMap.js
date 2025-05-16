@@ -32,13 +32,13 @@ const AdminDangerMapPage = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const res = await axios.get('http://15.164.94.96:3001/api/complaintsmap');
+        const res = await axios.get('http://localhost:3001/api/complaintsmap');
         const updatedPaths = [];
 
         for (const path of res.data) {
           if (!path.route_coords) {
             try {
-              const registerRes = await axios.post('http://15.164.94.96:3001/api/router/register', {
+              const registerRes = await axios.post('http://localhost:3001/api/router/register', {
                 start_lat: path.start_lat,
                 start_lng: path.start_lng,
                 end_lat: path.end_lat,
@@ -320,7 +320,7 @@ const AdminDangerMapPage = () => {
                 zIndex: 100,
               }}>
                 <p style={{ margin: 0, fontWeight: 500, color: '#111827' }}>
-                  {selectedPath.user_type} / {selectedAgeGroup} / {selectedPath.category || '없음'} / 위험점수: {selectedPath.score ?? '없음'} / 위험등급: {(selectedPath.danger_level ?? '').trim() || '없음'}
+                  {selectedPath.user_type} / {selectedAgeGroup} / {selectedPath.category || '없음'} / 위험점수: {selectedPath.danger_score !== undefined ? selectedPath.danger_score : '없음'} / 위험등급: {(selectedPath.danger_level ?? '').trim() || '없음'}
                 </p>
                 <p style={{ margin: 0, color: '#374151' }}>{selectedPath.reason || '내용 없음'}</p>
                 <p style={{ margin: 0, color: '#6b7280', fontSize: '13px' }}>{formatDate(selectedPath.created_at)}</p>
@@ -350,7 +350,8 @@ const AdminDangerMapPage = () => {
               .map((item, idx) => (
                 <li key={idx} className={styles['admin-complaint-item']}>
                   <p>
-                    {item.user_type} / {selectedAgeGroup} / {item.category || '없음'} / 위험점수: {item.score ?? '없음'} / 위험등급: {(item.danger_level ?? '').trim() || '없음'}
+                    {item.user_type} / {selectedAgeGroup} / {item.category || '없음'} / 위험점수: {item.danger_score !== undefined ? item.danger_score : '없음'}
+ / 위험등급: {(item.danger_level ?? '').trim() || '없음'}
                   </p>
                   <p>{item.reason || '내용 없음'}</p>
                   <p>{formatDate(item.created_at)}</p>
