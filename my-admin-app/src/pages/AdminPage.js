@@ -53,7 +53,7 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/complaints')
+    axios.get('http://15.164.94.96:3001/api/complaints')
       .then(res => {
         setComplaints(res.data);
         setFiltered(res.data);
@@ -123,6 +123,11 @@ const AdminPage = () => {
         backgroundColor: ['#60a5fa', '#f87171', '#34d399', '#fbbf24', '#a78bfa', '#f472b6', '#2dd4bf', '#818cf8', '#facc15', '#fb923c']
       }]
     });
+  };
+
+  const formatDate = (dateString) => {
+    const d = new Date(dateString);
+    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ${d.getHours()}시 ${d.getMinutes()}분`;
   };
 
   return (
@@ -230,7 +235,7 @@ const AdminPage = () => {
             {filtered.slice(0, 10).map(c => (
               <li key={c.id} className={styles['admin-complaint-item']}>
                 <p className={styles['admin-complaint-title']}>{c.title}</p>
-                <p className={styles['admin-complaint-meta']}>{c.category} | {c.created_at}</p>
+                <p className={styles['admin-complaint-meta']}>{c.category} | {formatDate(c.created_at)}</p>
                 <p className={styles['admin-complaint-content']}>{c.content}</p>
                 {c.is_danger === 1 && <p className={styles['admin-complaint-danger']}>⚠️ 위험 민원</p>}
               </li>
